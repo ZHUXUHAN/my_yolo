@@ -1,6 +1,7 @@
 from __future__ import print_function
 import os, sys
 import json
+from pycocotools.coco import COCO
 
 
 def convert(size, box):
@@ -18,15 +19,20 @@ def convert(size, box):
     return (x, y, w, h)
 
 
-json_file = '/train/trainset/1/mscoco2017/annotations/instances_test2017.json'  # # Object Instance 类型的标注
+json_file = '/train/trainset/1/mscoco2014/annotations/instances_val2014.json'  # # Object Instance 类型的标注
 
 data = json.load(open(json_file, 'r'))
 
-ana_txt_save_path = "/home/Yolo/PyTorch-YOLOv3/data/coco/labels/test2017"  # 保存的路径
+ana_txt_save_path = "/home/Yolo/yolov3/data/coco2014/labels/val2014"  # 保存的路径
 if not os.path.exists(ana_txt_save_path):
     os.makedirs(ana_txt_save_path)
 
-for img in data['images']:
+coco = COCO(json_file)
+json_category_id_to_contiguous_id = {
+        v: i + 1 for i, v in enumerate(coco.getCatIds())
+    }
+
+for i, img in enumerate(data['images']):
     # print(img["file_name"])
     filename = img["file_name"]
     img_width = img["width"]
@@ -35,13 +41,19 @@ for img in data['images']:
     # print(img["width"])
     img_id = img["id"]
     ana_txt_name = filename.split(".")[0] + ".txt"  # 对应的txt名字，与jpg一致
-    print(ana_txt_name)
+    if i %1000:
+        print(i)
     f_txt = open(os.path.join(ana_txt_save_path, ana_txt_name), 'w')
-    for ann in data['annotations']:
-        if ann['image_id'] == img_id:
-            # annotation.append(ann)
-            # print(ann["category_id"], ann["bbox"])
+
+    annIds = coco.getAnnIds(imgIds=img_id)
+    anns = coco.loadAnns(annIds)
+    if len(anns)>0:
+        for ann in anns:
             box = convert((img_width, img_height), ann["bbox"])
-            f_txt.write("%s %s %s %s %s\n" % (ann["category_id"], box[0], box[1], box[2], box[3]))
+            f_txt.write("%s %s %s %s %s\n" % (json_category_id_to_contiguous_id[ann["category_id"]]-1, box[0], box[1], box[2], box[3]))
+
+    else:
+        print(ana_txt_name)
     f_txt.close()
+
 
