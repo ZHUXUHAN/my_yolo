@@ -1,1 +1,1 @@
-CUDA_VISIBLE_DEVICES=1 python test.py --weights_path weights/yolov3.weights --batch_size 32 --iou_thres 0.7
+CUDA_VISIBLE_DEVICES=1 python test.py --weights_path weights/yolov3.weights --batch_size 32

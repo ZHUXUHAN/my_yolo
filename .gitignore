@@ -1,0 +1,15 @@
+
+.DS_Store
+build
+.git
+*.egg-info
+dist
+output
+data/coco
+backup
+__pycache__
+checkpoints
+data/coco2014
+data/coco2017
+weights
+logs
