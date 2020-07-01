@@ -4,6 +4,7 @@ coco的验证集和训练集的标签 用data/get_coco_dataset.sh来获得。
 因为用自己的代码生成的标签精度不对.
 
 wget -c https://pjreddie.com/media/files/coco/5k.part
+
 wget -c https://pjreddie.com/media/files/coco/trainvalno5k.part
 
 然后将两个文件分别放到 coco数据集文件夹的目录下。
